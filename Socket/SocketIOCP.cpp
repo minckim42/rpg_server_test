@@ -50,7 +50,7 @@ void		SocketIOCP::listen(int backlog)
 SocketEndpoint*		SocketIOCP::accept()
 {
 	SocketEndpoint*		endpoint = new SocketEndpoint;
-	int					len_addr;
+	int					len_addr = sizeof(SOCKADDR_IN);
 	endpoint->sock = ::accept(sock,	reinterpret_cast<SOCKADDR*>(&endpoint->addr), &len_addr);
 	if (endpoint->sock == INVALID_SOCKET)
 	{
