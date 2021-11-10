@@ -40,5 +40,8 @@ class SocketEndpoint: public __SocketBase
 	/*---------------------------------
 		Methods
 	---------------------------------*/
-	void		recv();
+	int			recv();
+	int			recv(void* buf, size_t len);
+	int			send();
+	int			send(void* buf, size_t len);
 };
