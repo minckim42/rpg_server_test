@@ -4,12 +4,12 @@
 #include <string>
 /*##############################################################################
 
-	Socket
+	SocketUDP
 
 ##############################################################################*/
 #define __UDP_PAYLOAD_SIZE 1000
 
-class Socket
+class SocketUDP
 {
 	/*---------------------------------
 		Static Members
@@ -34,10 +34,10 @@ class Socket
 	/*---------------------------------
 		Constructor & Destructor
 	---------------------------------*/
-	Socket();
-	Socket(Socket&& x);
-	Socket&		operator=(Socket&& x);
-	~Socket();
+	SocketUDP();
+	SocketUDP(SocketUDP&& x);
+	SocketUDP&		operator=(SocketUDP&& x);
+	~SocketUDP();
 
 	/*---------------------------------
 		Methods
@@ -49,7 +49,7 @@ class Socket
 	void		bind(int port);
 	int			connect();
 	int			connect(const std::string& ip, int port);
-	Socket		export_recv_socket(int port = 0);
+	SocketUDP		export_recv_socket(int port = 0);
 	int			recvfrom(void* buffer, int size);
 	int			sendto(void* buffer, int size);
 	int			send(void* buffer, int size);
