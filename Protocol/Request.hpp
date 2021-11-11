@@ -1,17 +1,21 @@
 #pragma once
-#include "Movable.hpp"
+#include "MoveData.hpp"
 #include <stdint.h>
+
 #pragma pack(1)
 
-struct ReqPosition
+struct ReqGame
 {
-	Movable		status;
-	uint32_t	len_bullets;
+	uint32_t		id;
+	MoveData		move_status;
+	uint32_t		len_bullets;
+	ReqGameBullet	bullet;
 };
 
-struct ReqPositionBullet
+struct ReqGameBullet
 {
-	Movable		status;
+	uint32_t	id;
+	MoveData	move_status;
 	uint32_t	id_hit;
 };
 

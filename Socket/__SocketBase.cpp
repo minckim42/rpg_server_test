@@ -71,7 +71,11 @@ void			__SocketBase::set_ip(const string& ip)
 		// throw SetIpFailed();
 	}
 }
-
+//------------------------------------------------------------------------------
+void			__SocketBase::clear_addr()
+{
+	memset(&addr, 0, sizeof(SOCKADDR_IN));
+}
 
 
 

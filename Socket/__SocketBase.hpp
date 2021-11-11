@@ -43,6 +43,7 @@ class __SocketBase
 	---------------------------------*/
 	void		set_ip(const std::string& ip);
 	void		set_port(int port);
+	void		clear_addr();
 };
 
 	// /*---------------------------------

@@ -10,19 +10,13 @@
 class SocketEndpoint: public __SocketBase
 {
 	/*---------------------------------
-		Types
-	---------------------------------*/
-	public:
-	typedef std::shared_ptr<SocketEndpoint>		Ptr;
-
-
-	/*---------------------------------
 		Members
 	---------------------------------*/
+	public:
 	enum Mode
 	{
-		READ = 0,
-		WRITE
+		RECV = 0,
+		SEND
 	};
 
 	OVERLAPPED		overlapped;
@@ -41,7 +35,14 @@ class SocketEndpoint: public __SocketBase
 		Methods
 	---------------------------------*/
 	int			recv();
-	int			recv(void* buf, size_t len);
+	int			recv(void* buf_extra);
+	int			recv(void* buf_extra, size_t len);
 	int			send();
-	int			send(void* buf, size_t len);
+	int			send(size_t len);
+	int			send(void* buf_extra, size_t len);
+
+	void		set_recv();
+	void		set_send();
+	bool		is_recv();
+	bool		is_send();
 };

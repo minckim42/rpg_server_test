@@ -16,6 +16,17 @@ struct Message
 	int			size();
 	int			body_size();
 
+	enum Type
+	{
+		REQ_GAME,
+		REQ_LOGIN,
+		REQ_LOGOUT,
+
+		RES_GAME,
+		RES_CONNECT
+	};
+
+
 	template <typename T>
 	T&			get_body()
 	{

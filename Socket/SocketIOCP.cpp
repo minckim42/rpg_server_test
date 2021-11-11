@@ -11,7 +11,7 @@ using namespace std;
 SocketIOCP::SocketIOCP(int port)
 :	__SocketBase()
 {
-	sock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	sock = WSASocket(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (sock == INVALID_SOCKET)
 	{
 		throw string("InitOverlappedFailed");
@@ -69,6 +69,5 @@ void				SocketIOCP::connect_iocp(SocketEndpoint* endpoint)
 		reinterpret_cast<ULONG_PTR>(endpoint),
 		0
 	);
-	endpoint->recv();
 }
 //------------------------------------------------------------------------------

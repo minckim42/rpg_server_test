@@ -3,6 +3,8 @@
 #include "SocketEndpoint.hpp"
 #include <vector>
 #include <thread>
+using namespace std;
+
 /*##############################################################################
 
 	SocketIOCP
@@ -50,22 +52,21 @@ class SocketIOCP: public __SocketBase
 
 		for (unsigned int i = 0 ; i < sys_info.dwNumberOfProcessors ; i++)
 		{
-			threads.emplace_back(func, (args)...);
+			threads.emplace_back(ref(func), (args)...);
 			threads.back().detach();
 		}
 	}
 
 	template	<typename F, typename... Args>
-	void		init_thread(F& func, Args&& ... args)
+	void		init_thread(F&& func, Args&& ... args)
 	{
 		SYSTEM_INFO			sys_info;
 		GetSystemInfo(&sys_info);
 
 		for (unsigned int i = 0 ; i < sys_info.dwNumberOfProcessors ; i++)
 		{
-			threads.emplace_back(func, (args)...);
+			threads.emplace_back(ref(func), (args)...);
 			threads.back().detach();
 		}
 	}
-
 };

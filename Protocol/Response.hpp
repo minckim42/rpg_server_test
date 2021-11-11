@@ -1,23 +1,23 @@
 #pragma once
-#include "Movable.hpp"
+#include "MoveData.hpp"
 #include <stdint.h>
 #pragma pack(1)
 
-struct ResPosition
+struct ResGame
 {
 	uint32_t	len_players;
 	uint32_t	len_bullets;
 };
 
-struct ResPositionPlayer
+struct ResGamePlayer
 {
-	Movable		status;
+	MoveData	move_status;
 	uint32_t	id;
 };
 
-struct ResPositionBullet
+struct ResGameBullet
 {
-	Movable		status;
+	MoveData	move_status;
 	uint32_t	id_hit;
 };
 
@@ -31,6 +31,7 @@ struct ResConnect
 		LOGOUT_FAIL,
 	};
 	uint32_t	result;
+	uint32_t	user_id;
 };
 
 #pragma pack()

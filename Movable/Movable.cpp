@@ -1,4 +1,13 @@
 #include "Movable.hpp"
+
+//Movable&	Movable::operator=(const Movable& x)
+//{
+//	position = Vec2(x.position);
+//	direction = Vec2(x.direction);
+//	speed = x.speed;
+//	return *this;
+//}
+
 void	Movable::move(double ms)
 {
 	position += Vec2(direction) * ms;
