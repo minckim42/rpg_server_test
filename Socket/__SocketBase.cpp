@@ -77,15 +77,18 @@ void			__SocketBase::clear_addr()
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
 }
 
-
-
-
-
-
-
-
-
-
+/*---------------------------------
+	Non Member
+---------------------------------*/
+void		init_wsadata()
+{
+	__SocketBase::init_wsadata();
+}
+//------------------------------------------------------------------------------
+void		cleanup_wsadata()
+{
+	__SocketBase::cleanup_wsadata();
+}
 
 
 

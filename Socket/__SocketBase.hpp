@@ -68,4 +68,8 @@ class __SocketBase
 	// 	const char*		what();
 	// };
 
-
+/*---------------------------------
+	Non Member
+---------------------------------*/
+void		init_wsadata();
+void		cleanup_wsadata();
