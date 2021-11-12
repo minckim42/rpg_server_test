@@ -1,5 +1,10 @@
 #include "Server.hpp"
 
+
+Server::Server(int port)
+:	socket(port)
+{}
+
 void		Server::operator()(Server::Controller dummy)
 {
 	SocketEndpoint*		endpoint;

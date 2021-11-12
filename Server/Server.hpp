@@ -23,6 +23,7 @@ class Server
 	std::unordered_map<uint32_t, Player>	players;
 	std::unordered_map<uint32_t, Bullet>	bullets;
 
+	Server(int port);
 
 	struct		Accept{};
 	void		operator()(Accept);
