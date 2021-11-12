@@ -16,7 +16,8 @@ SocketClient::SocketClient()
 SocketClient::SocketClient(const std::string& ip, int port)
 :	__SocketBase()
 {
-	clear_addr();
+	init();
+	connect(ip, port);
 }
 
 
@@ -30,7 +31,7 @@ void		SocketClient::init()
 		throw string("SocketFailed");
 		// throw SocketFailed();
 	}
-	memset(&addr, 0, sizeof(SOCKADDR_IN));
+	clear_addr();
 	addr.sin_family = AF_INET;
 }
 //------------------------------------------------------------------------------
