@@ -23,6 +23,7 @@ struct ReqLogin
 {
 	char		name[16];
 	char		password[16];
+	MoveData	player_data;
 };
 
 struct ReqLogout

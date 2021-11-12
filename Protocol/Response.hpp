@@ -13,6 +13,7 @@ struct ResGamePlayer
 {
 	MoveData	move_status;
 	uint32_t	id;
+	char		shape;
 };
 
 struct ResGameBullet
@@ -30,8 +31,8 @@ struct ResConnect
 		LOGOUT_SUCCESS,
 		LOGOUT_FAIL,
 	};
-	uint32_t	result;
-	uint32_t	user_id;
+	uint32_t		result;
+	ResGamePlayer	player;
 };
 
 #pragma pack()
