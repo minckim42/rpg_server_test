@@ -3,6 +3,7 @@
 #include <vector>
 struct Database
 {
+	typedef std::vector<std::vector<std::string>>	SelectData;
 	MYSQL		connection;
 
 	void		init(
@@ -13,5 +14,5 @@ struct Database
 		int					port=3306
 	);
 
-	std::vector<std::vector<std::string>>	select(const std::string& sql);
+	SelectData	select(const std::string& sql);
 };
