@@ -1,3 +1,4 @@
+#pragma once
 #include <math.h>
 /*##############################################################################
 
@@ -19,6 +20,8 @@ struct Vec2
 	Vec2(float x, float y);
 	Vec2(const float* ptr);
 	Vec2(float* ptr);
+	Vec2(const Vec2& other);
+	virtual	~Vec2()=default;
 
 	/*---------------------------------
 		Methods

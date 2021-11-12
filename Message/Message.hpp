@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stddef.h>
 #pragma pack(1)
 
 struct Message
@@ -10,23 +11,6 @@ struct Message
 	uint32_t	hash;
 	char		body[1000];
 
-	uint32_t	get_hash();
-	void		set_hash();
-	bool		check_hash();
-	int			size();
-	int			body_size();
-
-	enum Type
-	{
-		REQ_GAME,
-		REQ_LOGIN,
-		REQ_LOGOUT,
-
-		RES_GAME,
-		RES_CONNECT
-	};
-
-
 	template <typename T>
 	T&			get_body()
 	{
@@ -34,21 +18,27 @@ struct Message
 	}
 
 	template <typename T>
-	int			size()
+	void		set_length(int additional = 0)
 	{
-		return offsetof(Message, body) + sizeof(T);
+		length = offsetof(Message, body) + sizeof(T) + additional;
 	}
+
+	uint32_t	get_body_length();
 
 	template <typename T>
 	uint32_t	get_hash()
 	{
+		return get_hash(get_body_length());
+	}
+
+	uint32_t	get_hash(uint32_t size)
+	{
 		uint32_t	tmp = 0;
-		uint32_t	len_data = size<T>();
-		for (uint32_t i = 0 ; i < len_data ; i++)
+		for (uint32_t i = 0 ; i < size ; i++)
 		{
 			tmp *= body[i] * i + seed * i;
 		}
-		return tmp;			
+		return tmp;
 	}
 
 	template <typename T>
@@ -63,6 +53,8 @@ struct Message
 	{
 		return get_hash<T>() == hash;
 	}
+
+
 };
 
 #pragma pack()

@@ -1,4 +1,3 @@
-#include "../Socket/SocketClient.hpp"
 #include "Client.hpp"
 #include <iostream>
 #include <thread>

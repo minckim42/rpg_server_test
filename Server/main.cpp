@@ -13,9 +13,13 @@ int			main(int argc, char** argv)
 		Server		server(9090);
 
 		server.socket.bind();
+		cout << "bind ok\n";
 		server.socket.listen(5);
+		cout << "listen ok\n";
 		server.socket.create_iocp();
+		cout << "create iocp ok\n";
 		server.socket.init_thread(ref(server), Server::Controller());
+		cout << "create threads ok\n";
 		server(Server::Accept());
 		cleanup_wsadata();
 	}

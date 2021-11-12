@@ -12,16 +12,13 @@ using namespace std;
 SocketClient::SocketClient()
 :	__SocketBase()
 {}
-
+//------------------------------------------------------------------------------
 SocketClient::SocketClient(const std::string& ip, int port)
 :	__SocketBase()
 {
 	init();
 	connect(ip, port);
 }
-
-
-
 //------------------------------------------------------------------------------
 void		SocketClient::init()
 {
@@ -35,16 +32,18 @@ void		SocketClient::init()
 	addr.sin_family = AF_INET;
 }
 //------------------------------------------------------------------------------
-int			SocketClient::connect()
+void		SocketClient::connect()
 {
-	return ::connect(sock, reinterpret_cast<SOCKADDR*>(&addr), sizeof(SOCKADDR_IN));
+	if (::connect(sock, reinterpret_cast<SOCKADDR*>(&addr), sizeof(SOCKADDR_IN))
+	== SOCKET_ERROR)
+		throw string("Error: connect()");
 }
 //------------------------------------------------------------------------------
-int			SocketClient::connect(const string& ip, int port)
+void		SocketClient::connect(const string& ip, int port)
 {
 	set_ip(ip);
 	set_port(port);
-	return connect();
+	connect();
 }
 //------------------------------------------------------------------------------
 int			SocketClient::recv(void* buffer, int len)

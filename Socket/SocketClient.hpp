@@ -25,8 +25,8 @@ class SocketClient: public __SocketBase
 		Methods
 	---------------------------------*/	
 	void		init();
-	int			connect();
-	int			connect(const std::string& ip, int port);
+	void		connect();
+	void		connect(const std::string& ip, int port);
 	int			recv(void* buffer, int len);
 	int			send(void* buffer, int len);
 };
