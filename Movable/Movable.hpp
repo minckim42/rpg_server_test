@@ -4,6 +4,7 @@
 
 class Movable
 {
+	public:
 	Vec2	position;
 	Vec2	direction;
 	float	speed;			// unit length per ms
