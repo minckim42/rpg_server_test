@@ -14,6 +14,7 @@ class Movable
 	Movable(const Vec2& position, const Vec2& direction, float speed);
 	Movable&	operator=(const Movable& x);
 	Movable&	operator=(const MoveData& x);
+	MoveData	cast_movedata();
 	void		move(double ms);
 	void		rotate(double radian);		//	ccw is positive
 	bool		is_collide(const Movable& x, double ms, float collision_limit);
