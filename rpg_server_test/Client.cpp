@@ -10,7 +10,7 @@ Client::Client(const string& ip, int port)
 :	socket(ip, port)
 {}
 //------------------------------------------------------------------------------
-void		Client::operator()(Client::Run dummy)
+void		Client::run()
 {
 	while (1)
 	{
@@ -73,4 +73,13 @@ void		Client::game()
 	
 	socket.send(&message, message.size<ReqGame>() + 2 * sizeof(ReqGameBullet));
 }
+//------------------------------------------------------------------------------
+void		Client::service_game(ResGame& res_game)
+{
 
+}
+
+void		Client::start()
+{
+	
+}

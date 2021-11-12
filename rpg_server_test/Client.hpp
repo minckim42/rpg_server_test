@@ -1,6 +1,7 @@
 #pragma once
 #include "../Movable/Movable.hpp"
 #include "../Socket/SocketClient.hpp"
+#include "../Protocol/Protocol.hpp"
 #include <vector>
 #include <map>
 #include <string>
@@ -45,9 +46,10 @@ class Client
 	/*---------------------------------
 		Methods
 	---------------------------------*/
+
+	void		run();
+
 	//	thread routine	-----------------
-	struct		Run{};
-	void		operator()(Run);
 	struct		Controller{};
 	void		operator()(Controller);
 
