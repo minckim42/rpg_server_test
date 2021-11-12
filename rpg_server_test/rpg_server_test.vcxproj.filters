@@ -24,6 +24,9 @@
     <ClCompile Include="..\PlayerBase\PlayerBase.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\Movable\Movable.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.hpp">

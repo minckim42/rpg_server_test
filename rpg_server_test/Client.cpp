@@ -85,8 +85,18 @@ void		Client::game()
 //------------------------------------------------------------------------------
 void		Client::service_connect(ResConnect& res)
 {
-	cout << "result: " << res.result << endl;
-	cout << "user id: " << res.user_id << endl;
+	if (res.result == ResConnect::LOGIN_SUCCESS)
+	{
+		cout << "Login Success" << endl;
+		cout << "ID: " << res.player.id << endl;
+		cout << "shape: " << res.player.shape << endl;
+		status = Status::GAME;
+	}
+	else
+	{
+		cout << "Login Failed" << endl;
+		status = Status::START;
+	}
 }
 //------------------------------------------------------------------------------
 void		Client::service_game(ResGame& res)
@@ -121,4 +131,5 @@ void		Client::start()
 void		Client::login_wait()
 {
 	cout << "Connecting..." << endl;
+	Sleep(100);
 }
