@@ -1,4 +1,5 @@
 #include "../Movable/Movable.hpp"
+#include "../Protocol/Protocol.hpp"
 #include <string>
 
 class PlayerBase
@@ -10,16 +11,16 @@ class PlayerBase
 	Movable			movable;
 	uint32_t		id;
 	std::string		name;
+	char			shape;
 
 	/*---------------------------------
 		Constructor & Destructor
 	---------------------------------*/
 	public:
 	PlayerBase()=default;
-	PlayerBase(const Movable& movable, uint32_t id, std::string name);
-	
+	PlayerBase(const Movable& movable, uint32_t id, std::string name, char shape);
 
-	void		Move(float time);
+	ResGamePlayer	cast_response();
 };
 
 class BulletBase
