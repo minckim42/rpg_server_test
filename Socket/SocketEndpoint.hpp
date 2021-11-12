@@ -21,10 +21,13 @@ class SocketEndpoint: public __SocketBase
 	};
 
 	OVERLAPPED		overlapped;
-	char			buffer[ENDPOINT_BUF_SIZE];
-	WSABUF			wsabuf;
+	char			buffer_recv[ENDPOINT_BUF_SIZE];
+	char			buffer_send[ENDPOINT_BUF_SIZE];
+	WSABUF			wsabuf_recv;
+	WSABUF			wsabuf_send;
 	Mode			rw_mode;
-	DWORD			len_io;
+	DWORD			len_recv;
+	DWORD			len_send;
 	DWORD			flag;
 
 	/*---------------------------------
