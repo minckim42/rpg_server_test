@@ -1,3 +1,4 @@
+#pragma once
 #include "__SocketBase.hpp"
 #include <memory>
 #define	ENDPOINT_BUF_SIZE	1024
