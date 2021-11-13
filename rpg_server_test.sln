@@ -9,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "rpg_server_test\r
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{50C47D18-9EDC-4B3B-AAA6-42A9BB24A16A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{64403D1C-5B38-4127-9832-0AFEF0FEAF73} = {64403D1C-5B38-4127-9832-0AFEF0FEAF73}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Socket", "Socket\Socket.vcxproj", "{92EE2284-4DD7-4AF4-B7DA-E522532AF5B7}"
 EndProject
