@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include <ostream>
 /*##############################################################################
 
 	Vec2
@@ -42,3 +43,7 @@ struct Vec2
 	Vec2	proj(Vec2 other);
 	Vec2	perp(Vec2 other);
 };
+/*---------------------------------
+	Nonmember Methods
+---------------------------------*/
+std::ostream&	operator<<(std::ostream& os, const Vec2& v);

@@ -108,3 +108,12 @@ Vec2	Vec2::perp(Vec2 other)
 	return proj(other) - other;
 }
 //------------------------------------------------------------------------------
+
+/*---------------------------------
+	Nonmember Methods
+---------------------------------*/
+std::ostream&	operator<<(std::ostream& os, const Vec2& v)
+{
+	os << '(' << v.x << "," << v.y << ')';
+	return os;
+}
