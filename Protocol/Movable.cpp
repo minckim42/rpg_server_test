@@ -14,19 +14,6 @@ Movable&	Movable::operator=(const Movable& x)
 	return *this;
 }
 
-Movable&	Movable::operator=(const MoveData& x)
-{
-	position = Vec2(x.position);
-	direction = Vec2(x.direction);
-	speed = x.speed;
-	return *this;
-}
-
-MoveData	Movable::cast_movedata()
-{
-	return MoveData {{position.x, position.y}, {direction.x, direction.y}, speed};
-}
-
 void	Movable::move(double ms)
 {
 	position += Vec2(direction) * ms;

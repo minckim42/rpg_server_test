@@ -139,12 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="MoveData.hpp" />
+    <ClInclude Include="Movable.hpp" />
+    <ClInclude Include="PlayerBase.hpp" />
     <ClInclude Include="Protocol.hpp" />
     <ClInclude Include="Request.hpp" />
     <ClInclude Include="Response.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Movable.cpp" />
+    <ClCompile Include="PlayerBase.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

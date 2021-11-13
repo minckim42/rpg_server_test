@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include <iomanip>
 
 using namespace std;
 /*##############################################################################
@@ -10,7 +11,8 @@ using namespace std;
 	Constructor & Destructor
 ---------------------------------*/	
 Server::Server(int port)
-:	socket(port)
+:	socket(port),
+	time_start(clock::now())
 {
 	database.init("127.0.0.1", "root", "1234", "rpg_test");
 	cout << "database init\n";
@@ -131,7 +133,9 @@ void		Server::service_login(SocketEndpoint* endpoint)
 		return;
 	}
 
-	PlayerBase		tmp = init_player(player_data);
+	
+	s_message.get_body<ResConnect>().player = init_player(player_data);
+	PlayerBase&		tmp = s_message.get_body<ResConnect>().player;
 
 	if (players.find(tmp.id) != players.end())
 	{
@@ -144,7 +148,6 @@ void		Server::service_login(SocketEndpoint* endpoint)
 	players[tmp.id] = tmp;
 
 	s_message.get_body<ResConnect>().result = ResConnect::LOGIN_SUCCESS;
-	s_message.get_body<ResConnect>().player = tmp.cast_response();
 
 	print_log("Login success: " + name);
 }
@@ -190,7 +193,7 @@ Server::LocalData	Server::load_player_data(const string& name, const string& pas
 PlayerBase			Server::init_player(Database::SelectData& data)
 {
 	enum {
-		ID_PLAYER=0,
+		ID=0,
 		NAME,
 		POSITION_X,
 		POSITION_Y,
@@ -202,16 +205,16 @@ PlayerBase			Server::init_player(Database::SelectData& data)
 	#ifdef __DATABASE
 	vector<string>	row = data[0];
 	#endif
-	return PlayerBase(
-		Movable(
-			Vec2(stof(row[POSITION_X]), stof(row[POSITION_Y])),
-			Vec2(stof(row[DIRECTION_X]), stof(row[DIRECTION_Y])),
-			stof(row[SPEED])
-		),
-		stol(row[ID_PLAYER]),
-		row[NAME],
-		row[SHAPE][0]
-	);
+	PlayerBase	result;
+	result.movable.position = Vec2(stof(row[POSITION_X]), stof(row[POSITION_Y]));
+	result.movable.direction = Vec2(stof(row[DIRECTION_X]), stof(row[DIRECTION_Y]));
+	result.movable.speed = stof(row[SPEED]);
+	result.id = stol(row[ID]);
+	result.time_recv = time_now();
+	result.time_send = time_now();
+	result.shape = row[SHAPE][0];
+	memcpy(&result.name, row[NAME].data(), row[NAME].length());
+	return result;
 }
 //------------------------------------------------------------------------------
 Message&		Server::get_recv_message(SocketEndpoint* endpoint)
@@ -224,8 +227,13 @@ Message&		Server::get_send_message(SocketEndpoint* endpoint)
 	return reinterpret_cast<Message&>(*endpoint->buffer_send);
 }
 //------------------------------------------------------------------------------
-void		print_log(const string& str)
+double			Server::time_now()
 {
-	cout << "LOG | " << str << endl;
+	return static_cast<double>(chrono::duration_cast<chrono::microseconds>
+		(clock::now() - time_start).count()) / 1000;
 }
 //------------------------------------------------------------------------------
+void			Server::print_log(const string& str)
+{
+	cout << "LOG | " << setw(8) << setprecision(3) << time_now() / 1000 << "s | " << str << endl;
+}

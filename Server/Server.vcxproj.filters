@@ -24,10 +24,7 @@
     <ClCompile Include="Database.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\Movable\Movable.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PlayerBase\PlayerBase.cpp">
+    <ClCompile Include="..\Protocol\Movable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="Database.hpp">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocol\PlayerBase.hpp">
+      <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

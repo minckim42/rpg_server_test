@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include <iostream>
 using namespace std;
+
 /*##############################################################################
 
 	Client
@@ -69,18 +70,18 @@ void		Client::controller(Message& message)
 //------------------------------------------------------------------------------
 void		Client::game()
 {
-	// Message			message;
-	// ReqGame*		game_message = &message.get_body<ReqGame>();
-	// ReqGameBullet*	bullet0 = &game_message->bullet;
-	// ReqGameBullet*	bullet1 = bullet0 + 1;
+	Message		message;
 
-	// game_message->id = 3;
-	// game_message->move_status = {8, 1, 0, 0, 1};
-	// game_message->len_bullets = 2;
-	// *bullet0 = {1001, {1, 1, 1, 0, 1}, 3};
-	// *bullet0 = {1002, {1, 1, 1, 0, 1}, 4};
-	
-	// socket.send(&message, message.size<ReqGame>() + 2 * sizeof(ReqGameBullet));
+
+	while (1)
+	{
+		// instruction
+
+		// update
+
+		// send message
+		// screen
+	}
 }
 //------------------------------------------------------------------------------
 void		Client::service_connect(ResConnect& res)
@@ -90,6 +91,10 @@ void		Client::service_connect(ResConnect& res)
 		cout << "Login Success" << endl;
 		cout << "ID: " << res.player.id << endl;
 		cout << "shape: " << res.player.shape << endl;
+		
+		players[res.player.id] = res.player;
+		me = &players[res.player.id];
+		
 		status = Status::GAME;
 	}
 	else
@@ -133,3 +138,5 @@ void		Client::login_wait()
 	cout << "Connecting..." << endl;
 	Sleep(100);
 }
+
+//------------------------------------------------------------------------------

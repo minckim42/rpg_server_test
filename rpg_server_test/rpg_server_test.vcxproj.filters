@@ -21,10 +21,10 @@
     <ClCompile Include="Client.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\PlayerBase\PlayerBase.cpp">
+    <ClCompile Include="..\Protocol\Movable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\Movable\Movable.cpp">
+    <ClCompile Include="..\Protocol\PlayerBase.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

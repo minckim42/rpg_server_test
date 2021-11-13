@@ -1,8 +1,6 @@
 #pragma once
-#include "../Movable/Movable.hpp"
 #include "../Utils/Utils.hpp"
 #include "../Protocol/Protocol.hpp"
-#include "../PlayerBase/PlayerBase.hpp"
 #include <vector>
 #include <map>
 #include <string>
@@ -11,14 +9,6 @@
 	Client
 
 ##############################################################################*/
-class Player: public PlayerBase
-{
-};
-//------------------------------------------------------------------------------
-class Bullet: public BulletBase
-{
-};
-//------------------------------------------------------------------------------
 class Client
 {
 	/*---------------------------------
@@ -26,8 +16,10 @@ class Client
 	---------------------------------*/	
 	SocketClient			socket;
 
-	std::vector<Player>		players;
-	std::vector<Bullet>		bullets;
+	std::map<uint32_t, PlayerBase>	players;
+	std::map<uint32_t, BulletBase>	bullets;
+	PlayerBase*						me;
+	std::vector<BulletBase*>		my_bullets;
 
 	enum class Status
 	{
@@ -64,5 +56,7 @@ class Client
 	void		start();
 	void		login_wait();
 	void		game();
+
+	//	etc				-----------------
 };
 //------------------------------------------------------------------------------

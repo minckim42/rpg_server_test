@@ -1,17 +1,19 @@
 #pragma once
 #include "../Utils/Utils.hpp"
 #include "../Protocol/Protocol.hpp"
-#include "../PlayerBase/PlayerBase.hpp"
 #include "Database.hpp"
 
 #include <unordered_map>
 #include <iostream>
+#include <chrono>
 
 #define __DATABASE
 
 class Server
 {
 	public:
+	typedef		std::chrono::system_clock		clock;
+
 	#ifdef __DATABASE
 	typedef		Database::SelectData			LocalData;
 	#endif
@@ -20,8 +22,8 @@ class Server
 	std::unordered_map<uint32_t, PlayerBase>	players;
 	std::unordered_map<uint32_t, BulletBase>	bullets;
 	std::unordered_map<SOCKET, uint32_t>		sock_id_map;
-
-	Database	database;
+	Database									database;
+	clock::time_point							time_start;
 
 	Server(int port);
 
@@ -44,5 +46,6 @@ class Server
 
 	Message&	get_recv_message(SocketEndpoint* endpoint);
 	Message&	get_send_message(SocketEndpoint* endpoint);
+	double		time_now();
+	void		print_log(const std::string& str);
 };
-void		print_log(const std::string& str);

@@ -148,8 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Movable\Movable.cpp" />
-    <ClCompile Include="..\PlayerBase\PlayerBase.cpp" />
+    <ClCompile Include="..\Protocol\Movable.cpp" />
+    <ClCompile Include="..\Protocol\PlayerBase.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

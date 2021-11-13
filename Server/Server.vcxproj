@@ -151,13 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Movable\Movable.cpp" />
-    <ClCompile Include="..\PlayerBase\PlayerBase.cpp" />
+    <ClCompile Include="..\Protocol\Movable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Protocol\PlayerBase.hpp" />
     <ClInclude Include="Database.hpp" />
     <ClInclude Include="Server.hpp" />
   </ItemGroup>
