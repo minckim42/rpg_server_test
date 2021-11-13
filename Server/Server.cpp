@@ -36,6 +36,7 @@ void		Server::operator()(Server::Controller dummy)
 			reinterpret_cast<LPOVERLAPPED*>(&overlapped),
 			INFINITE			
 		);
+
 		if (endpoint->is_recv())
 		{
 			print_log("RECV mode");
@@ -83,6 +84,7 @@ void		Server::operator()(Server::Controller dummy)
 				endpoint->len_recv - get_recv_message(endpoint).length
 			);
 			endpoint->len_recv -= get_recv_message(endpoint).length;
+			print_log(string("remain: ") + to_string(endpoint->len_recv));
 			endpoint->recv();
 		}
 	}
@@ -107,6 +109,10 @@ void		Server::controller(SocketEndpoint* endpoint)
 	{
 		case MessageType::REQ_LOGIN:
 			service_login(endpoint);
+			break;
+
+		case MessageType::REQ_GAME:
+			service_game(endpoint);
 			break;
 	}	
 };
@@ -171,6 +177,69 @@ void			Server::service_disconnect(SocketEndpoint* endpoint)
 	delete endpoint;
 }
 //------------------------------------------------------------------------------
+void			Server::service_game(SocketEndpoint* endpoint)
+{
+	Message&	r_message = get_recv_message(endpoint);
+	Message&	s_message = get_send_message(endpoint);
+
+	ReqGame&	req_game = r_message.get_body<ReqGame>();
+	BulletBase*	r_bullets = &(r_message.get_body<ReqGame, BulletBase>());
+
+	memset(&s_message, 0, sizeof(Message));
+
+	// find player and update
+	
+	// lock_guard<mutex>	g(mutex_players);
+
+	print_log(string("ReqGame: ") + to_string(req_game.player.id));
+	if (set_player(&req_game.player) == false)
+		return;
+
+	// bullet update
+	for (int i = 0 ; i < req_game.len_bullets ; i++)
+	{
+		set_bullet(r_bullets + i);
+		if (r_bullets[i].id_hit != 0)
+			set_player_dead(r_bullets[i].id_hit);
+	}
+
+	s_message.type = MessageType::RES_GAME;
+
+	PlayerBase*	s_players = &(s_message.get_body<ResGame, PlayerBase>());
+	BulletBase*	s_bullets = &(s_message.get_body<ResGame, PlayerBase, BulletBase>(players.size()));
+
+	vector<uint32_t>		bullets_to_be_erased;
+
+	int i = 0;
+	auto	it_player = players.begin();
+	while (it_player != players.end())
+	{
+		if (it_player->second.is_alive == false)
+		{
+			it_player->second.shape = '#';
+		}
+		s_players[i] = it_player->second;
+		s_players[i++].time_send = time_now();
+		++it_player;
+	}
+	i = 0;
+	auto	it_bullet = bullets.begin();
+	while (it_bullet != bullets.end())
+	{
+		if (time_now() - it_bullet->second.time_birth > 4000)
+		{
+			it_bullet = bullets.erase(it_bullet);
+			continue;
+		}
+		s_bullets[i] = it_bullet->second;
+		s_bullets[i++].time_send = time_now();
+		++it_bullet;
+	}
+	s_message.set_length<ResGame, PlayerBase, BulletBase>(players.size(), bullets.size());
+	s_message.get_body<ResGame>().len_bullets = bullets.size();
+	s_message.get_body<ResGame>().len_players = players.size();
+}
+//------------------------------------------------------------------------------
 Server::LocalData	Server::load_player_data(const string& name, const string& password)
 {
 	string	query = \
@@ -214,7 +283,7 @@ PlayerBase			Server::init_player(Database::SelectData& data)
 	result.time_send = time_now();
 	result.shape = row[SHAPE][0];
 	result.is_moving = false;
-	result.id_alive = true;
+	result.is_alive = true;
 	result.speed = stof(row[SPEED]);
 	memset(&result.name, 0, LEN_NAME);
 	memcpy(&result.name, row[NAME].data(), row[NAME].length());
@@ -241,3 +310,35 @@ void			Server::print_log(const string& str)
 {
 	cout << "LOG | " << setw(8) << setprecision(3) << time_now() / 1000 << "s | " << str << endl;
 }
+//------------------------------------------------------------------------------
+bool			Server::set_player(PlayerBase* r_player)
+{
+	auto	it = players.find(r_player->id);
+	if (it == players.end())
+		return false;
+	bool	tmp = it->second.is_alive;
+	it->second = *r_player;
+	it->second.is_alive = tmp;
+	it->second.time_recv = time_now();
+	return true;
+}
+//------------------------------------------------------------------------------
+void			Server::set_bullet(BulletBase* r_bullet)
+{
+	if (r_bullet->time_birth == 0)
+	{
+		r_bullet->time_birth = time_now();
+	}
+	bullets[r_bullet->id] = *r_bullet;
+	bullets[r_bullet->id].time_recv = time_now();
+}
+//------------------------------------------------------------------------------
+bool			Server::set_player_dead(uint32_t key)
+{
+	auto	it = players.find(key);
+	if (it == players.end())
+		return false;
+	it->second.is_alive = false;
+	return true;
+}
+//------------------------------------------------------------------------------

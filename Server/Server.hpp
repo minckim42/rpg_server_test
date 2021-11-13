@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <chrono>
+#include <mutex>
 
 #define __DATABASE
 
@@ -25,6 +26,9 @@ class Server
 	Database									database;
 	clock::time_point							time_start;
 
+	std::mutex									mutex_players;
+	std::mutex									mutex_bullets;
+
 	Server(int port);
 
 	struct		Accept{};
@@ -36,6 +40,7 @@ class Server
 
 	void		service_login(SocketEndpoint* endpoint);
 	void		service_disconnect(SocketEndpoint* endpoint);
+	void		service_game(SocketEndpoint* endpoint);
 
 
 	LocalData	load_player_data(
@@ -48,4 +53,8 @@ class Server
 	Message&	get_send_message(SocketEndpoint* endpoint);
 	double		time_now();
 	void		print_log(const std::string& str);
+
+	bool		set_player(PlayerBase* r_player);
+	bool		set_player_dead(uint32_t key);
+	void		set_bullet(BulletBase* r_bullet);
 };
