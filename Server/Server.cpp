@@ -208,11 +208,15 @@ PlayerBase			Server::init_player(Database::SelectData& data)
 	PlayerBase	result;
 	result.movable.position = Vec2(stof(row[POSITION_X]), stof(row[POSITION_Y]));
 	result.movable.direction = Vec2(stof(row[DIRECTION_X]), stof(row[DIRECTION_Y]));
-	result.movable.speed = stof(row[SPEED]);
+	result.movable.speed = 0;
 	result.id = stol(row[ID]);
 	result.time_recv = time_now();
 	result.time_send = time_now();
 	result.shape = row[SHAPE][0];
+	result.is_moving = false;
+	result.id_alive = true;
+	result.speed = stof(row[SPEED]);
+	memset(&result.name, 0, LEN_NAME);
 	memcpy(&result.name, row[NAME].data(), row[NAME].length());
 	return result;
 }
