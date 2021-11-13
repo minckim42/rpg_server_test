@@ -16,7 +16,6 @@ Client::Client(const string& ip, int port)
 //------------------------------------------------------------------------------
 void		Client::run()
 {
-	cout << this << endl;
 	while (1)
 	{
 		switch (status)
@@ -31,6 +30,10 @@ void		Client::run()
 
 		case Status::GAME:
 			game();
+			break;
+
+		case Status::DEAD:
+			dead();
 			break;
 
 		case Status::EXIT:
@@ -57,6 +60,8 @@ void		Client::operator()(Client::Controller dummy)
 			continue;
 		if (len_read < message.length)
 			continue;
+		if (len_read == SOCKET_ERROR || status == Status::EXIT)
+			return;
 		controller(message);
 		memmove(&message, &message + message.length, len_read - message.length);
 		len_read -= message.length;
@@ -68,11 +73,11 @@ void		Client::controller(Message& message)
 	switch (message.type)
 	{
 		case MessageType::RES_CONNECT:
-			service_connect(message.get_body<ResConnect>());
+			service_connect(message);
 			break;
 
 		case MessageType::RES_GAME:
-			service_game(message.get_body<ResGame>());
+			service_game(message);
 			break;
 	}
 }
@@ -87,25 +92,34 @@ void		Client::game()
 	KeyManager	k_exit1(VK_ESCAPE);
 
 	FrameManager	screen_manager(100);
+	FrameManager	message_manager(100);
 
 	double		time0 = time_now();
+	double		last_shot = 0;
 	uint32_t	bullet_count = 0;
+	
 	while (1)
 	{
+		if (status == Status::DEAD)
+			return;
 		double	time_cur = time_now();
 
-		me->movable.speed = 0;
+		me.movable.speed = 0;
 		// instruction
 		double	time1 = time_now();
 		if (k_turn_left.is_pressed())
-			me->movable.rotate((time_cur - time0) / 1000);
+			me.movable.rotate((time_cur - time0) / 1000);
 		if (k_turn_right.is_pressed())
-			me->movable.rotate(-(time_cur - time0) / 1000);
+			me.movable.rotate(-(time_cur - time0) / 1000);
 		if (k_move.is_pressed())
-			me->movable.speed = me->speed;
+			me.movable.speed = me.speed;
 		if (k_shot.is_pressed())
 		{
-			shot(bullet_count);
+			if (time_now() - last_shot > BULLET_COOLDOWN)
+			{
+				shot(bullet_count);
+				last_shot = time_now();
+			}
 		}
 		if (k_exit0.is_pressed() || k_exit1.is_pressed())
 		{
@@ -116,63 +130,73 @@ void		Client::game()
 		update(time_cur - time0);
 		time0 = time_cur;
 
-
-
+		message_manager.set_interval(*this, SendMessage());
 		screen_manager.set_interval(*this, PrintScreen());
 	}
 }
 //------------------------------------------------------------------------------
-void		Client::shot(uint32_t bullet_count)
+void		Client::shot(uint32_t& bullet_count)
 {
-	// uint32_t	bullet_id = me->id * 0x1000 + bullet_count++;
-	// bullets[bullet_id] = BulletBase();
-	// BulletBase*	ptr_bullet = &bullets[bullet_id];
-	// my_bullets.push_back(ptr_bullet);
-	// ptr_bullet->id = bullet_id;
-	// ptr_bullet->movable = me->movable;
-	// ptr_bullet->movable.speed = SPEED_BULLET;
+	uint32_t	bullet_id = me.id * 0x1000 + bullet_count++;
+	
+	BulletBase&	bullet = (my_bullets[bullet_id] = BulletBase());
+	bullet.movable = me.movable;
+	bullet.movable.speed = BULLET_SPEED;
+	bullet.time_birth = 0;
+	bullet.time_recv =0;
+	bullet.time_send = 0;
+	bullet.id = bullet_id;
+	bullet.id_hit = 0;
 }
 //------------------------------------------------------------------------------
 void		Client::update(double time)
 {
-	// vector<BulletBase*>		to_be_erased;
-	// to_be_erased.reserve(my_bullets.size());
+	lock_guard<mutex>	g(mutex_update);
+	players.erase(me.id);
 
-	// for (BulletBase* ptr_bullet : my_bullets)
-	// {
-	// 	for (pair<const uint32_t, PlayerBase>& player_pair : players)
-	// 	{
-	// 		PlayerBase&	player = player_pair.second;
-	// 		if (&player == me)
-	// 			continue;
-	// 		if (ptr_bullet->movable.is_collide(player.movable, time, 1))
-	// 		{
-	// 			to_be_erased.push_back(ptr_bullet);
-	// 			player.id_alive = false;
-	// 		}
-	// 	}
-	// }
-
-	for (pair<const uint32_t, PlayerBase>& player_pair : players)
+	auto	it_my_bullet = my_bullets.begin();
+	while (it_my_bullet != my_bullets.end())
 	{
-		PlayerBase&	player = player_pair.second;
-		player.movable.update(time);
+		if (it_my_bullet->second.time_birth != 0
+		&& time_now() - it_my_bullet->second.time_birth > BULLET_LIFE)
+		{
+			it_my_bullet = my_bullets.erase(it_my_bullet);
+			continue;
+		}
+		for (auto& player : players)
+		{
+			if (player.second.movable.is_collide(it_my_bullet->second.movable, time, 1))
+			{
+				it_my_bullet->second.id_hit = player.second.id;
+			}
+		}
+		it_my_bullet->second.movable.update(time);
+		if (bullets.find(it_my_bullet->second.id) != bullets.end())
+		{
+			bullets.erase(it_my_bullet->second.id);
+		}
+		++it_my_bullet;
 	}
+	for (auto& i : players)
+	{
+		i.second.movable.update(time);
+	}
+	for (auto& i : bullets)
+	{
+		i.second.movable.update(time);
+	}
+	me.movable.update(time);
 }
 
 //------------------------------------------------------------------------------
-void		Client::service_connect(ResConnect& res)
+void		Client::service_connect(Message& message)
 {
+	ResConnect	res = message.get_body<ResConnect>();
 	if (res.result == ResConnect::LOGIN_SUCCESS)
 	{
-		players[res.player.id] = res.player;
-		me = &players[res.player.id];
+		me = res.player;
 		
 		cout << "Login Success" << endl;
-		cout << "ID: " << res.player.id << endl;
-		cout << "shape: " << res.player.shape << endl;
-		cout << "name: " << res.player.name << endl;
-		
 		status = Status::GAME;
 	}
 	else
@@ -182,11 +206,36 @@ void		Client::service_connect(ResConnect& res)
 	}
 }
 //------------------------------------------------------------------------------
-void		Client::service_game(ResGame& res)
+void		Client::service_game(Message& message)
 {
+	ResGame&	res = message.get_body<ResGame>();
+	PlayerBase*	r_players = &(message.get_body<ResGame, PlayerBase>());
+	BulletBase*	r_bullets = &(message.get_body<ResGame, PlayerBase, BulletBase>(res.len_players));
 
+	lock_guard<mutex>	g(mutex_update);
+	players.clear();
+	bullets.clear();
+	for (int i = 0 ; i < res.len_players ; i++)
+	{
+		if (me.id == r_players[i].id && !r_players[i].is_alive)
+		{
+			me.is_alive = false;
+			status = Status::DEAD;
+			return;
+		}
+		double	time = r_players[i].time_send - r_players[i].time_recv;
+		r_players[i].movable.update(time);
+		players[r_players[i].id] = r_players[i];
+	}
+	for (int i = 0 ; i < res.len_bullets ; i++)
+	{
+		double	time = r_bullets[i].time_send - r_bullets[i].time_recv;
+		r_bullets[i].movable.update(time);
+		bullets[r_bullets[i].id] = r_bullets[i];
+	}
+	// mutex_update.unlock();
 }
-
+//------------------------------------------------------------------------------
 void		Client::start()
 {
 	string		name, password;
@@ -210,7 +259,23 @@ void		Client::start()
 	status = Status::LOGIN_WAIT;
 
 }
-
+//------------------------------------------------------------------------------
+void		Client::dead()
+{
+	KeyManager	k_exit0('Q');
+	KeyManager	k_exit1(VK_ESCAPE);
+	cout << "You DIED!" << endl;
+	cout << "Press ESC or Q to Quit" << endl;
+	while (1)
+	{
+		if (k_exit0.is_pressed() || k_exit1.is_pressed())
+		{
+			status = Status::EXIT;
+			return;
+		}
+	}
+}
+//------------------------------------------------------------------------------
 void		Client::login_wait()
 {
 	cout << "Connecting..." << endl;
@@ -227,20 +292,68 @@ double			Client::time_now()
 void			Client::operator()(PrintScreen dummy)
 {
 	screen.clear_buffer();
-	for (pair<const uint32_t, PlayerBase>& player_pair : players)
+	for (auto& bullet : my_bullets)
 	{
-		PlayerBase&	player = player_pair.second;
-		screen.draw_point(player.movable.position.x,
-			player.movable.position.y,
-			player.shape);
-	}
-	for (pair<const uint32_t, BulletBase>& bullet_pair : bullets)
-	{
-		BulletBase&	bullet = bullet_pair.second;
-		screen.draw_point(bullet.movable.position.x,
-			bullet.movable.position.y,
+		screen.draw_point(
+			bullet.second.movable.position.x,
+			bullet.second.movable.position.y,
 			'*');
 	}
+
+	// critical section
+	{
+		lock_guard<mutex>	g(mutex_update);
+
+		for (auto& player : players)
+		{
+			screen.draw_point(
+				player.second.movable.position.x,
+				player.second.movable.position.y,
+				player.second.shape);
+			// cout << player.second.name << endl;
+		}
+		for (auto& bullet : bullets)
+		{
+			screen.draw_point(
+				bullet.second.movable.position.x,
+				bullet.second.movable.position.y,
+				'*');
+		}
+	}
+	screen.draw_point(me.movable.position.x, me.movable.position.y, me.shape);
 	screen.print();
-	cout << "direction: " << me->movable.direction << endl;
+	cout << "direction: " << me.movable.direction << endl;
+	cout << "name: " << me.name << endl;
 }
+//------------------------------------------------------------------------------
+void			Client::operator()(SendMessage dummy)
+{
+
+	Message		message;
+	message.type = MessageType::REQ_GAME;
+	message.set_length<ReqGame, BulletBase>(my_bullets.size());
+	ReqGame&	req_game = message.get_body<ReqGame>();
+	BulletBase*	s_bullets = &message.get_body<ReqGame, BulletBase>();
+	req_game.player = me;
+	
+	lock_guard<mutex>	g(mutex_update);
+	
+	req_game.len_bullets = my_bullets.size();
+	int		i = 0;
+	for (auto it : my_bullets)
+	{
+		s_bullets[i++] = it.second;
+	}
+	socket.send(&message, message.length);
+}
+//------------------------------------------------------------------------------
+bool			Client::set_player(PlayerBase* r_player)
+{
+	auto	it = players.find(r_player->id);
+	if (it == players.end())
+		return false;
+	PlayerBase&	player = it->second;
+	player.time_recv = time_now();
+	return true;
+}
+//------------------------------------------------------------------------------

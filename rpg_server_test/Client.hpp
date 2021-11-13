@@ -2,11 +2,12 @@
 #include "../Utils/Utils.hpp"
 #include "../Protocol/Protocol.hpp"
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <mutex>
 
 /*##############################################################################
 
@@ -28,20 +29,23 @@ class Client
 		START,
 		LOGIN_WAIT,
 		GAME,
+		DEAD,
 		EXIT
 	};
 	
 	SocketClient					socket;
 
-	std::map<uint32_t, PlayerBase>	players;
-	std::map<uint32_t, BulletBase>	bullets;
-	PlayerBase*						me;
-	std::vector<BulletBase*>		my_bullets;
+	std::unordered_map<uint32_t, PlayerBase>	players;
+	PlayerBase						me;
+	
+	std::unordered_map<uint32_t, BulletBase>	bullets;
+	std::unordered_map<uint32_t, BulletBase>	my_bullets;
 
 	Status							status;
 	clock::time_point				time_start;
 
 	Screen							screen;
+	std::mutex						mutex_update;
 
 	/*---------------------------------
 		Constructor & Destructor
@@ -63,14 +67,15 @@ class Client
 	void		controller(Message& message);
 
 	//	Service			-----------------
-	void		service_connect(ResConnect& res);
-	void		service_game(ResGame& res);
+	void		service_connect(Message& message);
+	void		service_game(Message& message);
 
 	//	status			-----------------
 	void		start();
 	void		login_wait();
 	void		game();
-	void		shot(uint32_t bullet_count);
+	void		dead();
+	void		shot(uint32_t& bullet_count);
 	void		update(double time);
 
 	//	etc				-----------------
@@ -79,5 +84,7 @@ class Client
 	void		operator()(PrintScreen);
 	struct		SendMessage{};
 	void		operator()(SendMessage);
+
+	bool		set_player(PlayerBase* r_player);
 };
 //------------------------------------------------------------------------------
