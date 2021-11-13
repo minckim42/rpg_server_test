@@ -6,6 +6,7 @@
 	Vec2
 
 ##############################################################################*/
+#pragma pack(1)
 struct Vec2
 {
 	/*---------------------------------
@@ -22,7 +23,7 @@ struct Vec2
 	Vec2(const float* ptr);
 	Vec2(float* ptr);
 	Vec2(const Vec2& other);
-	virtual	~Vec2()=default;
+	// virtual	~Vec2()=default;
 
 	/*---------------------------------
 		Methods
@@ -47,3 +48,4 @@ struct Vec2
 	Nonmember Methods
 ---------------------------------*/
 std::ostream&	operator<<(std::ostream& os, const Vec2& v);
+#pragma pack()
