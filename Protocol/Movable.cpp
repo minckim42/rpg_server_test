@@ -28,20 +28,39 @@ void		Movable::rotate(double radian)
 
 bool		Movable::is_collide(const Movable& x, double ms, float collision_limit)
 {
-	Vec2	relative = Vec2(x.position) - position;
-	float	a = direction * direction;
-	float	b = -2 * (relative * direction);
-	float	c = relative * relative - collision_limit * collision_limit;
+	// Vec2	relative = Vec2(x.position) - position;
+	// float	a = direction * direction;
+	// float	b = -2 * (relative * direction);
+	// float	c = relative * relative - collision_limit * collision_limit;
+
+	// float	bb4ac = b * b - 4 * a * c;
+	
+	// if (bb4ac < 0)
+	// 	return false;
+
+	// // float	time_collision0 = (-b + sqrtf(bb4ac)) / (2 * a);
+	// float	time_collision = (-b - sqrtf(bb4ac)) / (2 * a) / speed;
+
+	// if (time_collision < 0)
+	// 	return false;
+
+	// if (time_collision > ms)
+	// 	return false;
+	// return true;
+
+	Vec2	p = position - x.position;
+
+	float	a = Vec2(x.direction) * x.direction;
+	float	b = p * x.direction * 2 * x.speed;
+	float	c = p * p - collision_limit * collision_limit;
 
 	float	bb4ac = b * b - 4 * a * c;
-	
 	if (bb4ac < 0)
 		return false;
-
-	// float	time_collision0 = (-b + sqrtf(bb4ac)) / (2 * a);
-	float	time_collision = (-b - sqrtf(bb4ac)) / (2 * a) / speed;
-
-	if (time_collision > ms)
+	float	t = -b - sqrt(bb4ac) / 2 / a;
+	if (t < 0)
+		return false;
+	if (t >= ms)
 		return false;
 	return true;
 }
