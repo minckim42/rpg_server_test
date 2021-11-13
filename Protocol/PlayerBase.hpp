@@ -14,7 +14,7 @@ struct PlayerBase
 
 	Movable			movable;
 	uint32_t		id;
-	bool			id_alive;
+	bool			is_alive;
 	bool			is_moving;
 	double			time_recv;
 	double			time_send;
@@ -30,7 +30,9 @@ struct PlayerBase
 	// PlayerBase(const Movable& movable, uint32_t id, const std::string& name, char shape);
 };
 
-#define SPEED_BULLET	0.01;
+#define BULLET_SPEED	0.04
+#define BULLET_LIFE		1000
+#define BULLET_COOLDOWN	500
 
 struct BulletBase
 {
@@ -39,6 +41,7 @@ struct BulletBase
 	double			time_recv;
 	double			time_send;
 	uint32_t		id;
+	uint32_t		id_hit;
 };
 
 #pragma pack()
