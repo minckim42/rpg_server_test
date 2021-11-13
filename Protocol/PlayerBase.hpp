@@ -4,24 +4,23 @@
 #define LEN_NAME	16
 
 #pragma pack(1)
+
 struct PlayerBase
 {
 	/*---------------------------------
 		Member
 	---------------------------------*/
 	public:
-	enum {
-		ALIVE,
-		DEAD
-	};
 
 	Movable			movable;
 	uint32_t		id;
-	uint32_t		status;
+	bool			id_alive;
+	bool			is_moving;
 	double			time_recv;
 	double			time_send;
 	char			shape;
 	char			name[LEN_NAME];
+	float			speed;
 
 	/*---------------------------------
 		Constructor & Destructor
@@ -31,11 +30,15 @@ struct PlayerBase
 	// PlayerBase(const Movable& movable, uint32_t id, const std::string& name, char shape);
 };
 
+#define SPEED_BULLET	0.01;
+
 struct BulletBase
 {
-	public:
-	Movable		movable;
-	uint32_t	id;
+	Movable			movable;
+	double			time_birth;
+	double			time_recv;
+	double			time_send;
+	uint32_t		id;
 };
 
 #pragma pack()

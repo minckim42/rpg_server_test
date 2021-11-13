@@ -2,7 +2,8 @@
 #include <math.h>
 #include "../Utils/Utils.hpp"
 
-class Movable
+#pragma pack(1)
+struct Movable
 {
 	public:
 	Vec2	position;
@@ -12,7 +13,9 @@ class Movable
 	Movable()=default;
 	Movable(const Vec2& position, const Vec2& direction, float speed);
 	Movable&	operator=(const Movable& x);
-	void		move(double ms);
+
+	void		update(double ms);
 	void		rotate(double radian);		//	ccw is positive
 	bool		is_collide(const Movable& x, double ms, float collision_limit);
 };
+#pragma pack()

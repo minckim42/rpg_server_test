@@ -14,17 +14,19 @@ Movable&	Movable::operator=(const Movable& x)
 	return *this;
 }
 
-void	Movable::move(double ms)
+void		Movable::update(double ms)
 {
-	position += Vec2(direction) * ms;
+	// cout << "time: " <<  ms << endl;
+	position += direction * ms * speed;
 }
 
-void	Movable::rotate(double radian)
+void		Movable::rotate(double radian)
 {
 	direction.rot(radian);
+	direction = direction.unit();
 }
 
-bool	Movable::is_collide(const Movable& x, double ms, float collision_limit)
+bool		Movable::is_collide(const Movable& x, double ms, float collision_limit)
 {
 	Vec2	relative = Vec2(x.position) - position;
 	float	a = direction * direction;
