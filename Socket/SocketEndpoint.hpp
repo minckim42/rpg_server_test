@@ -1,7 +1,7 @@
 #pragma once
 #include "__SocketBase.hpp"
 #include <memory>
-#define	ENDPOINT_BUF_SIZE	1024
+#define	ENDPOINT_BUF_SIZE	4096
 /*##############################################################################
 
 	Socket Endpoint
