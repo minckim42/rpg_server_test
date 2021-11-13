@@ -4,3 +4,6 @@
 #include "../Socket/SocketEndpoint.hpp"
 #include "../Socket/SocketIOCP.hpp"
 #include "../Message/Message.hpp"
+#include "../KeyManager/KeyManager.hpp"
+#include "../Screen/Screen.hpp"
+#include "../FrameManager/FrameManager.hpp"
