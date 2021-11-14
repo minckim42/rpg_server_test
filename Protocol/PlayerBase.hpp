@@ -37,11 +37,11 @@ struct PlayerBase
 struct BulletBase
 {
 	Movable			movable;
+	uint32_t		id;
+	uint32_t		id_hit;
 	double			time_birth;
 	double			time_recv;
 	double			time_send;
-	uint32_t		id;
-	uint32_t		id_hit;
 };
 
 #pragma pack()
