@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "rpg_server_test\rpg_server_test.vcxproj", "{7F0B8AE3-79A8-4492-985D-A69770480A4E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "rpg_server_test\rpg_server_test.vcxproj", "{7F0B8AE3-79A8-4492-985D-A69770480A4E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{64403D1C-5B38-4127-9832-0AFEF0FEAF73} = {64403D1C-5B38-4127-9832-0AFEF0FEAF73}
 	EndProjectSection
@@ -28,6 +28,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Screen", "Screen\Screen.vcxproj", "{18C5B4F0-5A2F-4AE8-94C0-0EF6F63B92D0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameManager", "FrameManager\FrameManager.vcxproj", "{48C349BA-10DC-4399-A119-DA4A26DC2FDB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Database", "Database\Database.vcxproj", "{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileIO", "FileIO\FileIO.vcxproj", "{99AA115E-001B-4700-8676-EAFFC80F6D04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +121,22 @@ Global
 		{48C349BA-10DC-4399-A119-DA4A26DC2FDB}.Release|x64.Build.0 = Release|x64
 		{48C349BA-10DC-4399-A119-DA4A26DC2FDB}.Release|x86.ActiveCfg = Release|Win32
 		{48C349BA-10DC-4399-A119-DA4A26DC2FDB}.Release|x86.Build.0 = Release|Win32
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Debug|x64.ActiveCfg = Debug|x64
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Debug|x64.Build.0 = Debug|x64
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Debug|x86.ActiveCfg = Debug|Win32
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Debug|x86.Build.0 = Debug|Win32
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Release|x64.ActiveCfg = Release|x64
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Release|x64.Build.0 = Release|x64
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Release|x86.ActiveCfg = Release|Win32
+		{CAD1E0A2-3A2F-4BD3-A826-0AB2DB57EDDD}.Release|x86.Build.0 = Release|Win32
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Debug|x64.ActiveCfg = Debug|x64
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Debug|x64.Build.0 = Debug|x64
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Debug|x86.ActiveCfg = Debug|Win32
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Debug|x86.Build.0 = Debug|Win32
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Release|x64.ActiveCfg = Release|x64
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Release|x64.Build.0 = Release|x64
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Release|x86.ActiveCfg = Release|Win32
+		{99AA115E-001B-4700-8676-EAFFC80F6D04}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

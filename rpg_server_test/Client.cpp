@@ -25,7 +25,15 @@ void		Client::run()
 			break;
 
 		case Status::LOGIN_WAIT:
-			login_wait();
+			connect_wait();
+			break;
+
+		case Status::SIGN_UP:
+			sign_up();
+			break;
+
+		case Status::SIGN_UP_WAIT:
+			connect_wait();
 			break;
 
 		case Status::GAME:
@@ -76,6 +84,14 @@ void		Client::controller(Message& message)
 			service_connect(message);
 			break;
 
+		case MessageType::RES_LOG_IN_FAIL:
+			service_log_in_fail(message);
+			break;
+
+		case MessageType::RES_SIGN_UP_FAIL:
+			service_sign_up_fail(message);
+			break;
+
 		case MessageType::RES_GAME:
 			service_game(message);
 			break;
@@ -91,8 +107,8 @@ void		Client::game()
 	KeyManager	k_exit0('Q');
 	KeyManager	k_exit1(VK_ESCAPE);
 
-	FrameManager	screen_manager(100);
-	FrameManager	message_manager(100);
+	FrameManager	screen_manager(SCREEN_INTERVAL);
+	FrameManager	message_manager(MESSAGE_INTERVAL);
 
 	double		time0 = time_now();
 	double		last_shot = 0;
@@ -192,18 +208,21 @@ void		Client::update(double time)
 void		Client::service_connect(Message& message)
 {
 	ResConnect	res = message.get_body<ResConnect>();
-	if (res.result == ResConnect::LOGIN_SUCCESS)
-	{
-		me = res.player;
-		
-		cout << "Login Success" << endl;
-		status = Status::GAME;
-	}
-	else
-	{
-		cout << "Login Failed" << endl;
-		status = Status::START;
-	}
+	me = res.player;
+	cout << "Login Success" << endl;
+	status = Status::GAME;
+}
+//------------------------------------------------------------------------------
+void		Client::service_log_in_fail(Message& message)
+{
+	cout << "Log in Failed" << endl;
+	status = Status::START;
+}
+//------------------------------------------------------------------------------
+void		Client::service_sign_up_fail(Message& message)
+{
+	cout << "Sign up Failed" << endl;
+	status = Status::START;
 }
 //------------------------------------------------------------------------------
 void		Client::service_game(Message& message)
@@ -240,24 +259,51 @@ void		Client::start()
 {
 	string		name, password;
 
+	cout << "(If you want to sign up, type 'signup')\n";
 	cout << "name: ";
 	cout.flush();
 	cin >> name;
+
+	if (name == "signup")
+	{
+		status = Status::SIGN_UP;
+		return;
+	}
+
 	cout << "password: ";
 	cin >> password;
 
 	// ToDo: check name validate
 
 	Message		message;
-	message.set_length<ReqLogin>();
-	message.type = MessageType::REQ_LOGIN;
-	memset(&message.get_body<ReqLogin>(), 0, message.get_body_length());
-	memcpy(&message.get_body<ReqLogin>().name, name.data(), name.length());
-	memcpy(&message.get_body<ReqLogin>().password, password.data(), password.length());
+	message.set_length<ReqConnect>();
+	message.type = MessageType::REQ_LOG_IN;
+	memset(&message.get_body<ReqConnect>(), 0, message.get_body_length());
+	memcpy(&message.get_body<ReqConnect>().name, name.data(), name.length());
+	memcpy(&message.get_body<ReqConnect>().password, password.data(), password.length());
 	
 	socket_send(message);
 	status = Status::LOGIN_WAIT;
+}
+//------------------------------------------------------------------------------
+void		Client::sign_up()
+{
+	string		name, password;
+	cout << "new name: ";
+	cout.flush();
+	cin >> name;
+	cout << "password: ";
+	cin >> password;
 
+	Message		message;
+	message.set_length<ReqConnect>();
+	message.type = MessageType::REQ_SIGN_UP;
+	memset(&message.get_body<ReqConnect>(), 0, message.get_body_length());
+	memcpy(&message.get_body<ReqConnect>().name, name.data(), name.length());
+	memcpy(&message.get_body<ReqConnect>().password, password.data(), password.length());
+	
+	socket_send(message);
+	status = Status::SIGN_UP_WAIT;
 }
 //------------------------------------------------------------------------------
 void		Client::dead()
@@ -276,7 +322,7 @@ void		Client::dead()
 	}
 }
 //------------------------------------------------------------------------------
-void		Client::login_wait()
+void		Client::connect_wait()
 {
 	cout << "Connecting..." << endl;
 	Sleep(100);
@@ -322,8 +368,9 @@ void			Client::operator()(PrintScreen dummy)
 	}
 	screen.draw_point(me.movable.position.x, me.movable.position.y, me.shape);
 	screen.print();
-	cout << "direction: " << me.movable.direction << endl;
-	cout << "name: " << me.name << endl;
+	cout << "name: " << me.name 
+	<< "dir: " << me.movable.direction 
+	<< "pos: " << me.movable.position << endl;
 }
 //------------------------------------------------------------------------------
 void			Client::operator()(SendMessage dummy)

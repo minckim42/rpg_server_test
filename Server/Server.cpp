@@ -15,7 +15,7 @@ Server::Server(int port)
 	time_start(clock::now())
 {
 	database.init("127.0.0.1", "root", "1234", "rpg_test");
-	cout << "database init\n";
+	print_log("database init");
 }
 
 /*---------------------------------
@@ -39,7 +39,7 @@ void		Server::operator()(Server::Controller dummy)
 
 		if (endpoint->is_recv())
 		{
-			print_log("RECV mode");
+			// print_log("RECV mode");
 			// Disconnected
 			if (len == 0)
 			{
@@ -67,7 +67,7 @@ void		Server::operator()(Server::Controller dummy)
 		}
 		else
 		{
-			print_log("SEND mode");
+			// print_log("SEND mode");
 			endpoint->len_send += len;
 			int		len_to_send = get_send_message(endpoint).length;
 			int		len_remain = len_to_send - endpoint->len_send;
@@ -84,7 +84,7 @@ void		Server::operator()(Server::Controller dummy)
 				endpoint->len_recv - get_recv_message(endpoint).length
 			);
 			endpoint->len_recv -= get_recv_message(endpoint).length;
-			print_log(string("remain: ") + to_string(endpoint->len_recv));
+			// print_log(string("remain: ") + to_string(endpoint->len_recv));
 			endpoint->recv();
 		}
 	}
@@ -114,8 +114,12 @@ void		Server::controller(SocketEndpoint* endpoint)
 
 	switch (message.type)
 	{
-		case MessageType::REQ_LOGIN:
-			service_login(endpoint);
+		case MessageType::REQ_LOG_IN:
+			service_log_in(endpoint);
+			break;
+
+		case MessageType::REQ_SIGN_UP:
+			service_sign_up(endpoint);
 			break;
 
 		case MessageType::REQ_GAME:
@@ -124,45 +128,87 @@ void		Server::controller(SocketEndpoint* endpoint)
 	}	
 };
 //------------------------------------------------------------------------------
-void		Server::service_login(SocketEndpoint* endpoint)
+void		Server::service_log_in(SocketEndpoint* endpoint)
 {
 	print_log(__func__);
 
 	Message&	r_message = get_recv_message(endpoint);
 	Message&	s_message = get_send_message(endpoint);
 
-	string	name = r_message.get_body<ReqLogin>().name;
-	string	password = r_message.get_body<ReqLogin>().password;
-
-	s_message.type = MessageType::RES_CONNECT;
-	s_message.set_length<ResConnect>();
+	string	name = r_message.get_body<ReqConnect>().name;
+	string	password = r_message.get_body<ReqConnect>().password;
 
 	LocalData	player_data = load_player_data(name, password);
 
 	if (player_data.size() == 0)
 	{
-		s_message.get_body<ResConnect>().result = ResConnect::LOGIN_FAIL;
 		print_log("Login Failed: " + name);
+		service_log_in_fail(endpoint);
 		return;
 	}
-
 	
 	s_message.get_body<ResConnect>().player = init_player(player_data);
 	PlayerBase&		tmp = s_message.get_body<ResConnect>().player;
 
 	if (players.find(tmp.id) != players.end())
 	{
-		s_message.get_body<ResConnect>().result = ResConnect::LOGIN_FAIL;
 		print_log("Login Failed: Already logged in: " + name);
+		service_log_in_fail(endpoint);
 		return;
 	}
 
+	s_message.type = MessageType::RES_CONNECT;
+	s_message.set_length<ResConnect>();
 	sock_id_map[endpoint->sock] = tmp.id;
 	players[tmp.id] = tmp;
 
-	s_message.get_body<ResConnect>().result = ResConnect::LOGIN_SUCCESS;
-
 	print_log("Login success: " + name);
+}
+//------------------------------------------------------------------------------
+void		Server::service_log_in_fail(SocketEndpoint* endpoint)
+{
+	Message&	s_message = get_send_message(endpoint);
+	s_message.set_length<ResFail>();
+	s_message.type = MessageType::RES_LOG_IN_FAIL;
+}
+//------------------------------------------------------------------------------
+void		Server::service_sign_up(SocketEndpoint* endpoint)
+{
+	print_log(__func__);
+
+	Message&	r_message = get_recv_message(endpoint);
+	Message&	s_message = get_send_message(endpoint);
+
+	string	name = r_message.get_body<ReqConnect>().name;
+	string	password = r_message.get_body<ReqConnect>().password;
+
+
+	if (find_user_name(name) != 0 || name == "signup")
+	{
+		print_log("Dup Name: " + name);
+		service_sign_up_fail(endpoint);
+		return;
+	}
+
+	create_new_user(name, password);
+
+	s_message.type = MessageType::RES_CONNECT;
+	s_message.set_length<ResConnect>();
+	LocalData		player_data = load_player_data(name, password);
+	s_message.get_body<ResConnect>().player = init_player(player_data);
+	PlayerBase&		tmp = s_message.get_body<ResConnect>().player;
+	s_message.type = MessageType::RES_CONNECT;
+	s_message.set_length<ResConnect>();
+	sock_id_map[endpoint->sock] = tmp.id;
+	players[tmp.id] = tmp;
+	print_log("Signup and Login success: " + name);
+}
+//------------------------------------------------------------------------------
+void			Server::service_sign_up_fail(SocketEndpoint* endpoint)
+{
+	Message&	s_message = get_send_message(endpoint);
+	s_message.set_length<ResFail>();
+	s_message.type = MessageType::RES_SIGN_UP_FAIL;
 }
 //------------------------------------------------------------------------------
 void			Server::service_disconnect(SocketEndpoint* endpoint)
@@ -177,11 +223,32 @@ void			Server::service_disconnect(SocketEndpoint* endpoint)
 		print_log(string("erase id from map: ") + to_string(endpoint->sock));
 		if (players.find(id) != players.end())
 		{
+			// save_data(id);
 			players.erase(id);
 			print_log(string("erase player from map: ") + to_string(id));
 		}
 	}
 	delete endpoint;
+}
+//------------------------------------------------------------------------------
+void			Server::save_data(uint32_t id)
+{
+	stringstream	ss;
+	ss << "UPDATE player "
+	<< "SET "
+		<< "position_x=" << players[id].movable.position.x << ", "
+		<< "position_y=" << players[id].movable.position.y << "  "
+	<< "WHERE "
+		<< "idplayer=" << id
+	<< ";";
+	if (database.update(ss.str()) == true)
+	{
+		print_log("Success: Save data");
+	}
+	else
+	{
+		print_log("Fail: Save data: " + ss.str());
+	}
 }
 //------------------------------------------------------------------------------
 void			Server::service_game(SocketEndpoint* endpoint)
@@ -349,3 +416,42 @@ bool			Server::set_player_dead(uint32_t key)
 	return true;
 }
 //------------------------------------------------------------------------------
+uint32_t		Server::find_user_name(const string& name)
+{
+	stringstream	ss;
+	ss 
+	<< "SELECT "
+		<< "idplayer" << " "
+	<< "FROM "
+		<< "player" << " "
+	<< "WHERE "
+		<< "name='" << name << "'"
+	<< ";";	
+
+	auto	result = database.select(ss.str());
+	if (result.size() == 0)
+	{
+		return 0;
+	}
+	return stol(result[0][0]);
+}
+//------------------------------------------------------------------------------
+void			Server::create_new_user(const string& name, const string& password)
+{
+	stringstream	ss;
+	ss 
+	<< "INSERT INTO "
+		<< "player" << " "
+			<< "(name, password)"
+	<< "VALUES "
+		<< "('" << name << "', '" << password << "')"
+	<< ";";	
+	if (database.update(ss.str()) == true)
+	{
+		print_log("Success: new user: " + name);
+	}
+	else
+	{
+		print_log("Fail: new user: " + ss.str());
+	}
+}

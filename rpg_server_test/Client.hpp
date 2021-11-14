@@ -15,7 +15,9 @@
 
 ##############################################################################*/
 
-#define SCREEN_SIZE		100,27
+#define SCREEN_SIZE			100,27
+#define SCREEN_INTERVAL		100
+#define MESSAGE_INTERVAL	100
 
 class Client
 {
@@ -28,6 +30,8 @@ class Client
 	{
 		START,
 		LOGIN_WAIT,
+		SIGN_UP,
+		SIGN_UP_WAIT,
 		GAME,
 		DEAD,
 		EXIT
@@ -68,11 +72,14 @@ class Client
 
 	//	Service			-----------------
 	void		service_connect(Message& message);
+	void		service_log_in_fail(Message& message);
+	void		service_sign_up_fail(Message& message);
 	void		service_game(Message& message);
 
 	//	status			-----------------
 	void		start();
-	void		login_wait();
+	void		sign_up();
+	void		connect_wait();
 	void		game();
 	void		dead();
 	void		shot(uint32_t& bullet_count);
@@ -84,9 +91,7 @@ class Client
 	void		operator()(PrintScreen);
 	struct		SendMessage{};
 	void		operator()(SendMessage);
-
 	bool		set_player(PlayerBase* r_player);
-
 	void		socket_send(Message& message);
 };
 //------------------------------------------------------------------------------
