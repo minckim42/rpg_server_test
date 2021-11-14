@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "FileIO.hpp"
 
 using namespace std;
 
@@ -10,11 +10,11 @@ string	blank_remover(string& str)
 	return result;
 }
 //------------------------------------------------------------------------------
-SaveData	load_file(const string& path)
+FileData	load_file(const string& path)
 {
 	ifstream		ifs;
 	string			line;
-	SaveData			result;
+	FileData			result;
 
 	ifs.open(path);
 	if (ifs.is_open() == false)
@@ -43,7 +43,7 @@ SaveData	load_file(const string& path)
 	return result;
 }
 //------------------------------------------------------------------------------
-void	save_file(const string& path, const SaveData& data)
+void	save_file(const string& path, const FileData& data)
 {
 	ofstream		ofs;
 
@@ -67,3 +67,16 @@ void	save_file(const string& path, const SaveData& data)
 	}
 }
 //------------------------------------------------------------------------------
+string	get_data_from_file(const FileData& data, const string& key, int idx)
+{
+	auto	it = data.find(key);
+	if (it == data.end())
+	{
+		throw string("FileData: key not found: ") + key;
+	}
+	if (it->second.size() < idx)
+	{
+		throw string("FileData: Out of index: ") + key + " : " + to_string(idx);
+	}
+	return it->second[idx];
+}

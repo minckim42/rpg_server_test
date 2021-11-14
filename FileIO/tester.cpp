@@ -1,9 +1,8 @@
-#include "parser.hpp"
+#include "FileIO.hpp"
 #include "../Screen/Screen.hpp"
 #include "../KeyManager/KeyManager.hpp"
 #include "../FrameManager/FrameManager.hpp"
-#include "../Server/PlayerData.hpp"
-
+#include "PlayerData.hpp"
 using namespace std;
 
 void		print_screen(Screen& screen)

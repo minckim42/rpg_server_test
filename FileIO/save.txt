@@ -1,0 +1,4 @@
+name: Minckim
+position: 41.799946, 15.500007
+shape: A
+speed: 0.300000
