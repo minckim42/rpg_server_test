@@ -60,7 +60,7 @@ void		Client::operator()(Client::Controller dummy)
 	int		len_read = 0;
 	Message	message;
 
-	while (1)
+	while (status != Status::DEAD && status != Status::EXIT)
 	{
 		len_read += socket.recv(
 			reinterpret_cast<char*>(&message) + len_read, sizeof(Message));
@@ -68,7 +68,7 @@ void		Client::operator()(Client::Controller dummy)
 			continue;
 		if (len_read < message.length)
 			continue;
-		if (len_read == SOCKET_ERROR || status == Status::EXIT)
+		if (len_read == SOCKET_ERROR)
 			return;
 		controller(message);
 		memmove(&message, &message + message.length, len_read - message.length);
@@ -369,8 +369,8 @@ void			Client::operator()(PrintScreen dummy)
 	screen.draw_point(me.movable.position.x, me.movable.position.y, me.shape);
 	screen.print();
 	cout << "name: " << me.name 
-	<< "dir: " << me.movable.direction 
-	<< "pos: " << me.movable.position << endl;
+	<< "   dir: " << me.movable.direction 
+	<< "   pos: " << me.movable.position << endl;
 }
 //------------------------------------------------------------------------------
 void			Client::operator()(SendMessage dummy)

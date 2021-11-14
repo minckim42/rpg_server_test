@@ -17,7 +17,7 @@
 
 #define SCREEN_SIZE			100,27
 #define SCREEN_INTERVAL		100
-#define MESSAGE_INTERVAL	100
+#define MESSAGE_INTERVAL	300
 
 class Client
 {
