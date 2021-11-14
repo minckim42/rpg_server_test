@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\FileIO\FileIO.cpp" />
     <ClCompile Include="..\FrameManager\FrameManager.cpp" />
     <ClCompile Include="..\KeyManager\KeyManager.cpp" />
     <ClCompile Include="..\Message\Message.cpp" />

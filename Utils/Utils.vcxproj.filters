@@ -45,6 +45,9 @@
     <ClCompile Include="..\Screen\Screen.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\FileIO\FileIO.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils.hpp">
