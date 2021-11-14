@@ -86,5 +86,7 @@ class Client
 	void		operator()(SendMessage);
 
 	bool		set_player(PlayerBase* r_player);
+
+	void		socket_send(Message& message);
 };
 //------------------------------------------------------------------------------

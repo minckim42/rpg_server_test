@@ -255,7 +255,7 @@ void		Client::start()
 	memcpy(&message.get_body<ReqLogin>().name, name.data(), name.length());
 	memcpy(&message.get_body<ReqLogin>().password, password.data(), password.length());
 	
-	socket.send(&message, message.length);
+	socket_send(message);
 	status = Status::LOGIN_WAIT;
 
 }
@@ -344,7 +344,7 @@ void			Client::operator()(SendMessage dummy)
 	{
 		s_bullets[i++] = it.second;
 	}
-	socket.send(&message, message.length);
+	socket_send(message);
 }
 //------------------------------------------------------------------------------
 bool			Client::set_player(PlayerBase* r_player)
@@ -357,3 +357,8 @@ bool			Client::set_player(PlayerBase* r_player)
 	return true;
 }
 //------------------------------------------------------------------------------
+void			Client::socket_send(Message& message)
+{
+	message.set_hash();
+	socket.send(&message, message.length);
+}

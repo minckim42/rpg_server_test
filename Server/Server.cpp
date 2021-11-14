@@ -105,6 +105,13 @@ void		Server::controller(SocketEndpoint* endpoint)
 {
 	print_log(__func__);
 	Message&	message = get_recv_message(endpoint);
+
+	if (!message.check_hash())
+	{
+		print_log("Hash Error");
+		return;
+	}
+
 	switch (message.type)
 	{
 		case MessageType::REQ_LOGIN:
