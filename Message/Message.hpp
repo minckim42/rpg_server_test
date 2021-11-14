@@ -1,16 +1,30 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include <random>
 #pragma pack(1)
+/*##############################################################################
 
+	Message
+
+##############################################################################*/
 struct Message
 {
+	/*---------------------------------
+		Header
+	---------------------------------*/	
 	uint32_t	length;
 	uint32_t	type;
 	uint32_t	seed;
 	uint32_t	hash;
+	/*---------------------------------
+		body
+	---------------------------------*/	
 	char		body[4096];
 
+	/*---------------------------------
+		Methods
+	---------------------------------*/	
 	template <typename T>
 	T&			get_body()
 	{
@@ -48,36 +62,14 @@ struct Message
 	}
 	//--------------------------------------------------------------------------
 	uint32_t	get_body_length();
-	//--------------------------------------------------------------------------
-	template <typename T>
-	uint32_t	get_hash()
-	{
-		return get_hash(get_body_length());
-	}
-	//--------------------------------------------------------------------------
-	uint32_t	get_hash(uint32_t size)
-	{
-		uint32_t	tmp = 0;
-		for (uint32_t i = 0 ; i < size ; i++)
-		{
-			tmp *= body[i] * i + seed * i;
-		}
-		return tmp;
-	}
-	//--------------------------------------------------------------------------
-	template <typename T>
-	void		set_hash()
-	{
-		seed = 293847; // need random
-		hash = get_hash<T>();
-	}
-	//--------------------------------------------------------------------------
-	template <typename T>
-	bool		check_hash()
-	{
-		return get_hash<T>() == hash;
-	}
-	//--------------------------------------------------------------------------
+	uint32_t	get_hash();
+	uint32_t	get_hash(uint32_t size);
+	void		set_hash();
+	bool		check_hash();
 };
-
 #pragma pack()
+
+/*---------------------------------
+	Non member
+---------------------------------*/	
+uint32_t		easy_random(uint32_t a, uint32_t b);
