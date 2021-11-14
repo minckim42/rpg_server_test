@@ -11,6 +11,8 @@
 
 #define __DATABASE
 
+#define SAVEDATA
+
 class Server
 {
 	public:

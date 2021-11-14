@@ -4,14 +4,41 @@
 
 using namespace std;
 
+void		load_config(
+				string& db_host,
+				string& db_user,
+				string& db_password,
+				string& db_name,
+				int& port
+)
+{
+	FileData	file_data = load_file("server_config.txt");
+
+	db_host = get_data_from_file(file_data, "database_host");
+	db_user = get_data_from_file(file_data, "database_user");
+	db_password = get_data_from_file(file_data, "database_password");
+	db_name = get_data_from_file(file_data, "database_name");
+	port = stol(get_data_from_file(file_data, "port"));
+}
+
+
 int			main(int argc, char** argv)
 {
 	try
 	{
 		init_wsadata();
 
-		Server		server(9090);
+		string		db_host;
+		string		db_user;
+		string		db_password;
+		string		db_name;
+		int			port;
 
+		load_config(db_host, db_user, db_password, db_name, port);
+
+		Server		server(port);
+
+		server.database.init(db_host, db_user, db_password, db_name);
 		server.socket.bind();
 		server.print_log("bind OK");
 		server.socket.listen(5);

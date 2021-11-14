@@ -14,7 +14,6 @@ Server::Server(int port)
 :	socket(port),
 	time_start(clock::now())
 {
-	database.init("127.0.0.1", "root", "1234", "rpg_test");
 	print_log("database init");
 }
 
@@ -223,7 +222,9 @@ void			Server::service_disconnect(SocketEndpoint* endpoint)
 		print_log(string("erase id from map: ") + to_string(endpoint->sock));
 		if (players.find(id) != players.end())
 		{
-			// save_data(id);
+			#ifdef SAVEDATA
+			save_data(id);
+			#endif
 			players.erase(id);
 			print_log(string("erase player from map: ") + to_string(id));
 		}
@@ -288,10 +289,10 @@ void			Server::service_game(SocketEndpoint* endpoint)
 	auto	it_player = players.begin();
 	while (it_player != players.end())
 	{
-		if (it_player->second.is_alive == false)
-		{
-			it_player->second.shape = '#';
-		}
+		// if (it_player->second.is_alive == false)
+		// {
+		// 	it_player->second.shape = '#';
+		// }
 		s_players[i] = it_player->second;
 		s_players[i++].time_send = time_now();
 		++it_player;
@@ -413,6 +414,7 @@ bool			Server::set_player_dead(uint32_t key)
 	if (it == players.end())
 		return false;
 	it->second.is_alive = false;
+	it->second.shape = '#';
 	return true;
 }
 //------------------------------------------------------------------------------
