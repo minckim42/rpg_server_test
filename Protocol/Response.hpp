@@ -11,15 +11,12 @@ struct ResGame
 
 struct ResConnect
 {
-	enum	ResultType
-	{
-		LOGIN_SUCCESS,
-		LOGIN_FAIL,
-		LOGOUT_SUCCESS,
-		LOGOUT_FAIL,
-	};
-	uint32_t		result;
 	PlayerBase		player;
+};
+
+struct ResFail
+{
+	uint32_t		dummy;
 };
 
 #pragma pack()

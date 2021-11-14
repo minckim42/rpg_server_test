@@ -10,15 +10,10 @@ struct ReqGame
 	uint32_t	len_bullets;
 };
 
-struct ReqLogin
+struct ReqConnect
 {
 	char		name[16];
 	char		password[16];
-};
-
-struct ReqLogout
-{
-	uint32_t	dummy;
 };
 
 #pragma pack()
