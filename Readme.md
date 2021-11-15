@@ -38,12 +38,12 @@ CREATE TABLE		`player2`	(
 	`idplayer`	INT		NOT	NULL,
 	`name`		VARCHAR(45)	NOT	NULL,
 	`password`	VARCHAR(45)	NOT	NULL,
-	`position_x`	FLOAT		NULL				DEFAULT	3,
-	`position_y`	FLOAT		NULL				DEFAULT	3,
-	`direction_x`	FLOAT		NULL				DEFAULT	1,
-	`direction_y`	FLOAT		NULL				DEFAULT	0,
-	`speed`		FLOAT		NULL				DEFAULT	0.08,
-	`shape`		CHAR		NULL				DEFAULT	'N',
+	`position_x`	FLOAT		NULL	DEFAULT	3,
+	`position_y`	FLOAT		NULL	DEFAULT	3,
+	`direction_x`	FLOAT		NULL	DEFAULT	1,
+	`direction_y`	FLOAT		NULL	DEFAULT	0,
+	`speed`		FLOAT		NULL		DEFAULT	0.08,
+	`shape`		CHAR		NULL		DEFAULT	'N',
 	PRIMARY	KEY	(`idplayer`));
 	
 ```
