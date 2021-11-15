@@ -1,3 +1,5 @@
+https://user-images.githubusercontent.com/63211297/141737547-e410bc08-7eca-4d94-8e02-a0f88a5418df.mp4
+
 # 개요
 
 실시간 전투에 초점을 맞추고 진행하다보니 아직 RPG는 없습니다.
