@@ -42,8 +42,8 @@ CREATE TABLE		`player2`	(
 	`position_y`	FLOAT		NULL	DEFAULT	3,
 	`direction_x`	FLOAT		NULL	DEFAULT	1,
 	`direction_y`	FLOAT		NULL	DEFAULT	0,
-	`speed`		FLOAT		NULL		DEFAULT	0.08,
-	`shape`		CHAR		NULL		DEFAULT	'N',
+	`speed`		FLOAT		NULL	DEFAULT	0.08,
+	`shape`		CHAR		NULL	DEFAULT	'N',
 	PRIMARY	KEY	(`idplayer`));
 	
 ```
