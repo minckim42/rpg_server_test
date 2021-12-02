@@ -27,7 +27,7 @@ MySQL 필요
 ### 서버
 
 ```bash
-# Release모드로 빌드 후
+# Server 프로젝트를 Release모드로 빌드 후
 /x64/Release/Server.exe
 ```
 
@@ -36,7 +36,7 @@ MySQL 필요
 `player`라는 테이블을 갖는 데이터베이스를 추가해야 합니다.
 
 ```sql
-CREATE TABLE		`player2`	(
+CREATE TABLE		`player`	(
 	`idplayer`	INT		NOT	NULL,
 	`name`		VARCHAR(45)	NOT	NULL,
 	`password`	VARCHAR(45)	NOT	NULL,
@@ -65,7 +65,7 @@ port: 9090
 ### 클라이언트
 
 ```bash
-# Release모드로 빌드 후
+# Client 프로젝트를 Release모드로 빌드 후
 /x64/Release/Client.exe
 ```
 
